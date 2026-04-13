@@ -1,0 +1,32 @@
+databases:
+  - name: url-shortener-db
+    databaseName: urlshortener
+    user: urlshortener
+    plan: free
+
+services:
+  - type: redis
+    name: url-shortener-redis
+    plan: free
+    maxmemoryPolicy: allkeys-lru
+
+  - type: web
+    name: url-shortener
+    env: python
+    plan: free
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn --chdir Backend app:app --bind 0.0.0.0:$PORT --workers 2 --timeout 120
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: url-shortener-db
+          property: connectionString
+      - key: REDIS_URL
+        fromService:
+          type: redis
+          name: url-shortener-redis
+          property: connectionString
+      - key: SECRET_KEY
+        generateValue: true
+      - key: PYTHON_VERSION
+        value: 3.11.0
