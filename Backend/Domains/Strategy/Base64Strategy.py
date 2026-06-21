@@ -29,6 +29,9 @@ class Base64Strategy:
         # Return the desired length
         return url_safe[:length]
 
+    # URL-safe base64 alphabet (after +/ are swapped for -_ and padding stripped)
+    CHARSET = string.ascii_letters + string.digits + '-_'
+
     @staticmethod
     def is_valid_short_code(short_code):
         """
@@ -40,8 +43,10 @@ class Base64Strategy:
         Returns:
             bool: True if valid, False otherwise
         """
+        return bool(short_code) and all(c in Base64Strategy.CHARSET for c in short_code)
+
     @staticmethod
     def get_strategy_name():
         """Get the name of this strategy"""
         return "base64"
-    
+
