@@ -9,6 +9,7 @@ services:
     name: url-shortener-redis
     plan: free
     maxmemoryPolicy: allkeys-lru
+    ipAllowList: []  # empty = internal-only access (no public connections)
 
   - type: web
     name: url-shortener
